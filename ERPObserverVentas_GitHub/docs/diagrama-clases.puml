@@ -1,0 +1,70 @@
+@startuml
+title Diagrama de clases - Patrón Observer en ERP Inventario
+
+class Main {
+  +main(args: String[]): void
+}
+
+class MainFrame {
+  -inventario: Inventario
+  -ventas: ObservadorVentas
+  -registrarProducto(): void
+  -actualizarStock(): void
+  -modificarPrecio(): void
+  -desactivarProducto(): void
+  -refrescarVista(): void
+}
+
+class Inventario {
+  -productos: Map<String, Producto>
+  -observadores: List<ObservadorERP>
+  -operacionesRealizadas: int
+  -notificacionesEnviadas: int
+  +agregarObservador(observador: ObservadorERP): void
+  +registrarProducto(producto: Producto): void
+  +actualizarStock(codigo: String, nuevoStock: int): void
+  +modificarPrecio(codigo: String, nuevoPrecio: double): void
+  +desactivarProducto(codigo: String): void
+  +listarProductos(): List<Producto>
+}
+
+class Producto {
+  -codigo: String
+  -descripcion: String
+  -categoria: String
+  -stock: int
+  -precio: double
+  -activo: boolean
+}
+
+class Notificacion {
+  -fechaHora: LocalDateTime
+  -areaDestino: String
+  -tipoCambio: String
+  -codigoProducto: String
+  -mensaje: String
+}
+
+interface ObservadorERP {
+  +getNombreArea(): String
+  +actualizar(notificacion: Notificacion): void
+}
+
+class ObservadorVentas {
+  -notificaciones: List<Notificacion>
+  +getNombreArea(): String
+  +actualizar(notificacion: Notificacion): void
+  +getNotificaciones(): List<Notificacion>
+}
+
+Main --> MainFrame
+MainFrame --> Inventario
+MainFrame --> ObservadorVentas
+Inventario "1" o-- "*" Producto
+Inventario "1" o-- "1" ObservadorERP
+ObservadorERP <|.. ObservadorVentas
+Inventario ..> Notificacion
+ObservadorVentas "1" o-- "*" Notificacion
+
+@enduml
+

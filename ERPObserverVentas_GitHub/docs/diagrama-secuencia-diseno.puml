@@ -1,0 +1,26 @@
+@startuml
+title Diagrama de secuencia - Inventario notifica a Ventas
+
+actor Usuario
+boundary "MainFrame\nInterfaz gráfica" as UI
+control "Inventario\nSujeto observado" as Inventario
+entity "Producto" as Producto
+interface "ObservadorERP" as Obs
+control "ObservadorVentas\nObservador concreto" as Ventas
+entity "Notificacion" as Notificacion
+
+Usuario -> UI: Completa formulario y presiona botón
+UI -> Inventario: registrarProducto(producto)\nactualizarStock(codigo, stock)\nmodificarPrecio(codigo, precio)\ndesactivarProducto(codigo)
+Inventario -> Producto: Actualiza datos del producto
+Inventario -> Notificacion: Crear notificación del cambio
+Inventario -> Obs: actualizar(notificacion)
+Obs <|.. Ventas
+Ventas -> Ventas: Guardar notificación en historial
+UI -> Inventario: listarProductos()
+Inventario --> UI: Lista actualizada
+UI -> Ventas: getNotificaciones()
+Ventas --> UI: Historial de notificaciones
+UI --> Usuario: Muestra tabla, historial y resumen
+
+@enduml
+
